@@ -18,11 +18,10 @@ export const useFindMarketplace = ({
   const { data, refetch, status } = useQuery({
     queryKey: ['marketplace', address],
     queryFn: async () => {
-      const url = new URL('/sol/v1/marketplace/my_markets', SHYFT_API_URL);
+      const url = new URL('/sol/v1/marketplace/find', SHYFT_API_URL);
       url.searchParams.append('network', network);
-      // url.searchParams.append('creator_address', address);
-      // url.searchParams.append('currency_address', currencyAddress);
-      console.log('SHYFT_API_URL', url.toString(), window.ENV.SHYFT_API_KEY)
+      url.searchParams.append('authority_address', address);
+      url.searchParams.append('currency_address', currencyAddress);
       try {
         const res = await axios.get(url.toString(), {
           headers: {

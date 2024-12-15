@@ -22,11 +22,10 @@ const AuthorPage: React.FC<AuthorPageProps> = ({
   const nfts = data?.result ?? [];
 
   const { status: listStatus, listNFT } = useListNFT({ sellerWallet: address, network, marketplaceAddress })
-  console.log('listStatus', listStatus)
 
   return (
-    <section className="container mx-auto px-5 py-8 md:py-12 lg:px-14 flex gap-10">
-      <aside className="w-1/4">
+    <section className="container mx-auto px-5 py-8 md:py-12 lg:px-14 flex gap-10 flex-col md:flex-row">
+      <aside className="lg:w-1/4 w-full">
         <div>
           <img
             className="inline-block h-24 w-24 rounded-full"
@@ -41,7 +40,7 @@ const AuthorPage: React.FC<AuthorPageProps> = ({
             Author
           </motion.h1>
           <div>
-            <p className="text-base font-semibold text-dark-gray dark:text-dark">
+            <p className="pt-2 text-base font-semibold text-dark-gray dark:text-dark">
               {username}
             </p>
           </div>
@@ -60,8 +59,8 @@ const AuthorPage: React.FC<AuthorPageProps> = ({
         <div className="mt-3 flex flex-row">
           
         </div>
-          <div className="mt-3 flex flex-row">
-            <div className="py-5 lg:py-0 lg:px-5 xl:px-10 first:pl-0 first:pt-0">
+          <div className="mt-3 flex flex-row gap-2 justify-around">
+            <div className="py-5 lg:py-0">
               <h2 className="text-sm font-semibold uppercase text-dark-gray dark:text-dark">
                 Following
               </h2>
@@ -69,7 +68,7 @@ const AuthorPage: React.FC<AuthorPageProps> = ({
                 40
               </p>
             </div>
-            <div className="py-5 lg:py-0 lg:px-5 xl:px-10 first:pl-0 first:pt-0">
+            <div className="py-5 lg:py-0">
               <h2 className="text-sm font-semibold uppercase text-dark-gray dark:text-dark">
                 Followers
               </h2>
@@ -87,14 +86,14 @@ const AuthorPage: React.FC<AuthorPageProps> = ({
         </div>
       </aside>
 
-      <section className="w-3/4 mt-6 lg:col-span-2 lg:mt-0 xl:col-span-3">
+      <section className="lg:w-3/4 w-full mt-6 lg:col-span-2 lg:mt-0 xl:col-span-3">
         <h2>
           NFTs
         </h2>
 
         <div className="grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10 lg:gap-x-8 xl:grid-cols-3">
           {nfts.map(({ mint, name, image_uri, attributes }) => (
-            <article key={mint} className="rounded-lg border border-gray-200 bg-white shadow dark:border-gray-700 dark:bg-slate-900">
+            <article key={mint} className="flex flex-col rounded-lg border border-gray-200 bg-white shadow dark:border-gray-700 dark:bg-slate-900">
               <a href={`/product/${mint}`}>
                 <img className="rounded-t-lg" src={image_uri} alt={name} />
               </a>
@@ -111,7 +110,7 @@ const AuthorPage: React.FC<AuthorPageProps> = ({
                   <ShareIcon className="m-2 h-5 w-5 text-dark-gray dark:text-dark" aria-hidden="true" />
                 </div> */}
               </div>
-              <div className="flex w-full items-center justify-between space-x-6 p-3">
+              <div className="flex w-full space-x-6 p-3">
                 <div className="pt-3">
                   <h2 className="text-sm font-medium text-gray-700 dark:text-medium group-hover:text-gray-900">
                     {attributes.artist}

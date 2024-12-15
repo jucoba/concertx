@@ -64,28 +64,28 @@ export default function Index() {
               survived not only five centuries, but also the leap into
               electronic typesetting, remaining essentially unchanged.
             </motion.p>
-            <div className="mt-3 flex flex-row">
-              <Badge className="mr-2">#PopRock</Badge>
-              <Badge className="mr-2">#AlternativeRock</Badge>
+            <div className="mt-3 gap-2 flex flex-row">
+              <Badge>#PopRock</Badge>
+              <Badge>#AlternativeRock</Badge>
             </div>
-            <div className="mt-3 flex flex-row">
+            <div className="mt-3 gap-2 flex flex-row justify-around">
               <button
                 type="button"
-                className="inline-flex items-center gap-x-1.5 rounded-md bg-transparent px-3 py-2 text-sm font-semibold text-dark-gray dark:text-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-gray-900"
+                className="inline-flex items-center gap-x-1.5 rounded-md bg-transparent py-2 text-sm font-semibold text-dark-gray dark:text-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-gray-900"
               >
                 <EyeIcon className="-mr-0.5 h-5 w-5" aria-hidden="true" />
                 200 Views
               </button>
               <button
                 type="button"
-                className="inline-flex items-center gap-x-1.5 rounded-md bg-transparent px-3 py-2 text-sm font-semibold text-dark-gray dark:text-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-gray-900"
+                className="inline-flex items-center gap-x-1.5 rounded-md bg-transparent py-2 text-sm font-semibold text-dark-gray dark:text-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-gray-900"
               >
                 <HeartIcon className="-mr-0.5 h-5 w-5" aria-hidden="true" />
                 226 Likes
               </button>
               <button
                 type="button"
-                className="inline-flex items-center gap-x-1.5 rounded-md bg-transparent px-3 py-2 text-sm font-semibold text-dark-gray dark:text-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-gray-900"
+                className="inline-flex items-center gap-x-1.5 rounded-md bg-transparent py-2 text-sm font-semibold text-dark-gray dark:text-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-gray-900"
               >
                 <ShareIcon className="-mr-0.5 h-5 w-5" aria-hidden="true" />
                 Share
