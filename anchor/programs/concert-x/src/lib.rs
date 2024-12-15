@@ -72,3 +72,13 @@ pub struct Concert {
 }
 
 const DISCRIMINATOR: usize = 8;
+
+#[error_code]
+pub enum ErrorCode {
+    #[msg("The concert is not active.")]
+    ConcertNotActive,
+    #[msg("The funding goal has been exceeded.")]
+    GoalExceeded,
+    #[msg("Math overflow.")]
+    Overflow,
+}
