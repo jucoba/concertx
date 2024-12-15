@@ -1,7 +1,7 @@
 # Welcome to ConcertX!
 
 <p align="center">
-  <a href="https://bio.link/concertx" target="blank"><img src="public/assets/welcome.png" width="680" alt="Welcome to ConcertX" /></a>
+  <a href="https://bio.link/concertx" target="blank"><img src="web/public/assets/welcome.png" width="680" alt="Welcome to ConcertX" /></a>
 </p>
 
 Are you a musician looking to bring your unique concert ideas to life? Look no further than ConcertX. Our platform allows you to set a funding goal and deadline for your concert, and encourages backers to pledge their support and help bring your vision to life. Plus, with our immersive experiences, your audience can truly immerse themselves in your music like never before.
