@@ -31,7 +31,7 @@ pub mod concert_x {
 pub struct CreateConcert<'info> {
     #[account(
         init,
-        seeds = [b"concertX", initializer.key().as_ref()],
+        seeds = [b"concertX", title.as_bytes(), initializer.key().as_ref()],
         bump,
         payer = initializer,
         space = DISCRIMINATOR + Concert::INIT_SPACE
