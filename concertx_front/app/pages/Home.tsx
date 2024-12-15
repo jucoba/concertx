@@ -89,11 +89,11 @@ const HomePage: React.FC = () => {
             only five centuries, but also the leap into electronic typesetting,
             remaining essentially unchanged.
           </motion.p>
-          <div className="mt-3 flex flex-row">
-            <Badge className="mr-2">
+          <div className="mt-3 gap-2 flex flex-row">
+            <Badge>
               #PopRock
             </Badge>
-            <Badge className="mr-2">
+            <Badge>
               #AlternativeRock
             </Badge>
           </div>
@@ -188,47 +188,45 @@ const HomePage: React.FC = () => {
               key={artist.name}
               className="border border-gray-300 bg-white px-4 py-5 dark:border-gray-700 dark:bg-slate-900 sm:rounded-lg sm:px-6"
             >
-              <div className="flex flex-wrap items-center justify-between sm:flex-nowrap">
-                <Avatar
-                  img={avatarImg}
-                  name="J.D Nicholls"
-                  details="@jdnichollsc"
-                  className="flex-1 w-full"
-                >
-                  <div className="mt-4 divide-y divide-gray-300">
-                    <p className="text-sm text-dark-gray dark:text-dark">
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit
-                      quam corrupti consectetur.
-                    </p>
-                    <div className="mt-4 flex flex-row gap-5 pt-4 xl:gap-10">
-                      <div className="flex-none">
-                        <h2 className="text-xs font-semibold uppercase text-dark-gray dark:text-dark">
-                          Category
-                        </h2>
-                        <p className="mt-1 text-xs font-normal tracking-tight text-gray-600 dark:text-medium">
-                          #Rock
-                        </p>
-                      </div>
-                      <div className="flex-none">
-                        <h2 className="text-xs font-semibold uppercase text-dark-gray dark:text-dark">
-                          Followers
-                        </h2>
-                        <p className="mt-1 text-xs font-normal tracking-tight text-gray-600 dark:text-medium">
-                          26
-                        </p>
-                      </div>
-                      <div className="flex flex-1 justify-end">
-                        <Button
-                          className="px-3.5 py-2.5"
-                          onClick={() => navigate('/artist')}
-                        >
-                          Follow
-                        </Button>
-                      </div>
+              <Avatar
+                img={avatarImg}
+                name="J.D Nicholls"
+                details="@jdnichollsc"
+                className="flex-1 w-full"
+              >
+                <div className="mt-4 divide-y divide-gray-300">
+                  <p className="text-sm text-dark-gray dark:text-dark">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit
+                    quam corrupti consectetur.
+                  </p>
+                  <div className="mt-4 pt-4 flex flex-col md:flex-row gap-2 md:gap-5 xl:gap-10">
+                    <div className="flex-none">
+                      <h2 className="text-xs font-semibold uppercase text-dark-gray dark:text-dark">
+                        Category
+                      </h2>
+                      <p className="mt-1 text-xs font-normal tracking-tight text-gray-600 dark:text-medium">
+                        #Rock
+                      </p>
+                    </div>
+                    <div className="flex-none">
+                      <h2 className="text-xs font-semibold uppercase text-dark-gray dark:text-dark">
+                        Followers
+                      </h2>
+                      <p className="mt-1 text-xs font-normal tracking-tight text-gray-600 dark:text-medium">
+                        26
+                      </p>
+                    </div>
+                    <div className="flex flex-1 justify-end">
+                      <Button
+                        className="px-3.5 py-2.5"
+                        onClick={() => navigate('/artist')}
+                      >
+                        Follow
+                      </Button>
                     </div>
                   </div>
-                </Avatar>
-              </div>
+                </div>
+              </Avatar>
             </li>
           ))}
         </ul>
