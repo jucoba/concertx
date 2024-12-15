@@ -9,7 +9,7 @@ pub mod concert_x {
     pub fn create_concert(
         ctx: Context<CreateConcert>,
         title: String,
-        description: String,
+        short_description: String,
         goal_amount: u32,
         start_date: i64,
         end_date: i64,
@@ -18,7 +18,7 @@ pub mod concert_x {
         let concert = &mut ctx.accounts.concert;
         concert.creator = ctx.accounts.initializer.key();
         concert.title = title;
-        concert.description = description;
+        concert.short_description = short_description;
         concert.goal_amount = goal_amount;
         concert.start_date = start_date;
         concert.end_date = end_date;
@@ -34,12 +34,26 @@ pub struct CreateConcert<'info> {
         seeds = [b"concertX", title.as_bytes(), initializer.key().as_ref()],
         bump,
         payer = initializer,
-        space = DISCRIMINATOR + Concert::INIT_SPACE
+        space = DISCRIMINATOR + Concert::MAX_SIZE
     )]
     pub concert: Account<'info, Concert>,
     #[account(mut)]
     pub initializer: Signer<'info>,
     pub system_program: Program<'info, System>,
+}
+
+
+impl Concert {
+    pub const MAX_TITLE_LEN: usize = 20;   // Maximum length of the title
+    pub const MAX_DESC_LEN: usize = 200;  // Maximum length of the short description
+    pub const MAX_SIZE: usize = 32                          // creator (Pubkey)
+                            + 4 + Concert::MAX_TITLE_LEN    // title (4 for length + 20 max characters)
+                            + 4 + Concert::MAX_DESC_LEN     // short_description (4 for length + 200 max characters)
+                            + 8                             // goal_amount (u64)
+                            + 8                             // current_amount (u64)
+                            + 8                             // start_date (i64)
+                            + 8                             // end_date (i64)
+                            + 1;                            // status (u8)
 }
 
 #[account]
@@ -48,8 +62,8 @@ pub struct Concert {
     pub creator: Pubkey,  
     #[max_len(20)]            // Creator's wallet address
     pub title: String,                // Campaign title
-    #[max_len(30)]
-    pub description: String,          // Campaign description
+    #[max_len(100)]
+    pub short_description: String,          // Campaign description
     pub goal_amount: u32,             // Funding goal in lamports
     pub current_amount: u64,          // Current amount pledged
     pub start_date: i64,              // Campaign start time

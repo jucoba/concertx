@@ -29,7 +29,7 @@ describe("concert-x", () => {
     
     const account = await program.account.concert.fetch(concertXPda);
     expect(account.title).equals(title);
-    expect(account.description).equals(desc);
+    expect(account.shortDescription).equals(desc);
     expect(account.startDate.eq(startDate)).to.be.true;
     expect(account.endDate.eq(endDate)).to.be.true;
   });
