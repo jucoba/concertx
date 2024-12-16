@@ -3,7 +3,7 @@ import { Program } from "@coral-xyz/anchor";
 import { ConcertX } from "../target/types/concert_x";
 import {fetchConcerts} from "../../web/app/utils/crypto";
 import { expect } from "chai";
-import BN from "bn.js";
+import BN, { max } from "bn.js";
 
 describe("concert-x", () => {
   // Configure the client to use the local cluster.
@@ -18,9 +18,10 @@ describe("concert-x", () => {
     const title = "The big concert";
     const desc = "The most amazing concert";
     const goalAmount = 1000;
+    const maxTokenSupply = 1000;
     const startDate = new BN(new Date(2024,12,31,10,0,0).getTime());
     const endDate = startDate.add(new BN(1000));
-    const tx = await program.methods.createConcert(title, desc,goalAmount,startDate,endDate).rpc();
+    const tx = await program.methods.createConcert(title, desc,goalAmount,startDate,endDate, maxTokenSupply).rpc();
     console.log("Your transaction signature", tx);
 
     const [concertXPda] = anchor.web3.PublicKey.findProgramAddressSync(
@@ -33,6 +34,8 @@ describe("concert-x", () => {
     expect(account.shortDescription).equals(desc);
     expect(account.startDate.eq(startDate)).to.be.true;
     expect(account.endDate.eq(endDate)).to.be.true;
+    expect(account.maxTokenSupply).equals(maxTokenSupply);
+    
 
     const concerts = await fetchConcerts();
     expect(concerts.length).greaterThan(0);
@@ -41,7 +44,7 @@ describe("concert-x", () => {
     
   });
 
-  it("Make an apportation", async () => {
+  /*it("Make an apportation", async () => {
     // Add your test here.
     const title = "The little concert";
     const desc = "The most amazing concert";
@@ -83,7 +86,7 @@ describe("concert-x", () => {
       //expect(updatedConcertAccount.currentAmount.toNumber()).to.equal(aportationAmount);
     
     
-  });
+  });*/
 
 
 

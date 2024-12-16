@@ -16,6 +16,7 @@ pub mod concert_x {
         goal_amount: u32,
         start_date: i64,
         end_date: i64,
+        max_token_supply: u32,
     ) -> Result<()> {
         msg!("Greetings from: {:?}", ctx.program_id);
         let concert = &mut ctx.accounts.concert;
@@ -25,6 +26,7 @@ pub mod concert_x {
         concert.goal_amount = goal_amount;
         concert.start_date = start_date;
         concert.end_date = end_date;
+        concert.max_token_supply = max_token_supply;
         Ok(())
     }
 
@@ -94,6 +96,7 @@ pub struct Concert {
     pub start_date: i64,              // Campaign start time
     pub end_date: i64,                // Campaign end time
     pub status: u8,                   // 0 = active, 1 = completed, 2 = cancelled
+    pub max_token_supply: u32,
 }
 
 const DISCRIMINATOR: usize = 8;
