@@ -60,6 +60,20 @@ describe("concert-x", () => {
       signature: airdropTxBacker,
       type: "confirmed", // Commitment level as the type
     });
+
+    const aportationAmount = 500;
+
+    await program.methods
+      .makeAportation(new anchor.BN(aportationAmount))
+      .accounts({
+        concert: concertXPda,
+        backer: backer.publicKey,
+      })
+      .signers([backer])
+      .rpc();
+
+      const updatedConcertAccount = await program.account.concert.fetch(concertXPda);
+      expect(updatedConcertAccount.currentAmount.toNumber()).to.equal(aportationAmount);
     
     
   });

@@ -1,4 +1,7 @@
 use anchor_lang::prelude::*;
+use anchor_lang::solana_program::system_instruction;
+
+
 
 declare_id!("Fh63wv5yhjeNPhyd7jN4ZAhAqLjngHxr8fhV9u7F21fu");
 
@@ -24,6 +27,17 @@ pub mod concert_x {
         concert.end_date = end_date;
         Ok(())
     }
+
+    
+
+    pub fn make_aportation(ctx: Context<MakeAportation>, amount: u64) -> Result<()> {
+        
+        
+        Ok(())
+    }
+
+    
+    
 }
 
 #[derive(Accounts)]
@@ -41,6 +55,17 @@ pub struct CreateConcert<'info> {
     pub initializer: Signer<'info>,
     pub system_program: Program<'info, System>,
 }
+
+#[derive(Accounts)]
+pub struct MakeAportation<'info> {
+    #[account(mut)]  // Mutable account to allow lamports transfer
+    pub concert: Account<'info, Concert>,  // Concert account to receive the lamports
+    #[account(mut)]  // Mutable account to allow lamports transfer
+    pub backer: Signer<'info>,  // The backer account from which funds are deducted
+    pub system_program: Program<'info, System>,  // The system program to manage lamport transfers
+}
+
+
 
 
 impl Concert {
@@ -81,4 +106,6 @@ pub enum ErrorCode {
     GoalExceeded,
     #[msg("Math overflow.")]
     Overflow,
+    #[msg("Transfer error")]
+    TransferFailed,
 }
