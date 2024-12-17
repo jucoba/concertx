@@ -76,6 +76,7 @@ describe("concert-x", () => {
 
       const updatedConcertAccount = await program.account.concert.fetch(concertXPda);
       expect(updatedConcertAccount.currentAmount.toNumber()).to.equal(contributionAmount);
+      expect(updatedConcertAccount.contributors.length).greaterThan(0);
 
     
     
