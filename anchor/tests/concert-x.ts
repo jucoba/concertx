@@ -1,8 +1,9 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { ConcertX } from "../target/types/concert_x";
+import {fetchConcerts} from "../../web/app/utils/crypto";
 import { expect } from "chai";
-import BN from "bn.js";
+import BN, { max } from "bn.js";
 
 describe("concert-x", () => {
   // Configure the client to use the local cluster.
@@ -27,6 +28,7 @@ describe("concert-x", () => {
                                                    new BN(concert.ticketPrice),
                                                    concert.startDate, 
                                                    concert.endDate).rpc();
+
     console.log("Your transaction signature", tx);
 
     const [concertXPda] = anchor.web3.PublicKey.findProgramAddressSync(
@@ -43,7 +45,6 @@ describe("concert-x", () => {
   });
 
   it("Make a contribution", async () => {
-
     // Get PDA of the concert campaign 
     const [concertXPda] = anchor.web3.PublicKey.findProgramAddressSync(
       [Buffer.from("concertX"), Buffer.from(concert.title), provider.wallet.publicKey.toBuffer()],
@@ -75,6 +76,7 @@ describe("concert-x", () => {
 
       const updatedConcertAccount = await program.account.concert.fetch(concertXPda);
       expect(updatedConcertAccount.currentAmount.toNumber()).to.equal(contributionAmount);
+
     
     
   });

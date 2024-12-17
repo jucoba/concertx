@@ -2,15 +2,25 @@ use anchor_lang::prelude::*;
 use anchor_lang::solana_program::system_instruction;
 use anchor_lang::system_program::{transfer, Transfer};
 
-
-
+/// Program ID for the ConcertX smart contract
 declare_id!("Fh63wv5yhjeNPhyd7jN4ZAhAqLjngHxr8fhV9u7F21fu");
 
+/// Main program module containing all instruction handlers
 #[program]
 pub mod concert_x {
     use super::*;
 
-    pub fn create_concert(//maybe we can include checks using requires!()
+    pub fn create_concert(
+    /// Creates a new concert crowdfunding campaign
+    /// 
+    /// # Arguments
+    /// * `ctx` - The context of the instruction
+    /// * `title` - The title of the concert campaign
+    /// * `short_description` - Brief description of the concert
+    /// * `goal_amount` - Target funding amount in lamports
+    /// * `start_date` - Unix timestamp for campaign start
+    /// * `end_date` - Unix timestamp for campaign end
+    /// * `max_token_supply` - Maximum number of tokens that can be minted
         ctx: Context<CreateConcert>,
         title: String,
         short_description: String,
@@ -18,8 +28,9 @@ pub mod concert_x {
         ticket_price: u64,
         start_date: i64,
         end_date: i64,
+        max_token_supply: u32,
     ) -> Result<()> {
-        msg!("Greetings from: {:?}", ctx.program_id);
+        msg!("Creating new concert campaign");
         let concert = &mut ctx.accounts.concert;
         concert.pda = ctx.accounts.initializer.key();
         concert.title = title;
@@ -64,9 +75,11 @@ pub mod concert_x {
     }
 }
 
+/// Account validation struct for creating a new concert
 #[derive(Accounts)]
 #[instruction(title:String)]
 pub struct CreateConcert<'info> {
+    /// The concert account to be created
     #[account(
         init,
         seeds = [b"concertX", title.as_bytes(), initializer.key().as_ref()],
@@ -75,59 +88,81 @@ pub struct CreateConcert<'info> {
         space = DISCRIMINATOR + Concert::MAX_SIZE
     )]
     pub concert: Account<'info, Concert>,
+    /// The account creating the concert (pays for rent)
     #[account(mut)]
     pub initializer: Signer<'info>,
+    /// The system program
     pub system_program: Program<'info, System>,
 }
 
+/// Account validation struct for making contributions
 #[derive(Accounts)]
 pub struct MakeContribution<'info> {
-    #[account(mut)]  // Mutable account to allow lamports transfer
+    #[account(mut)]  /// The concert account receiving the contribution
     pub concert: Account<'info, Concert>,  // Escrow account to receive the lamports
-    #[account(mut)]  // Mutable account to allow lamports transfer
-    pub backer: Signer<'info>,  // The backer account from which funds are deducted
+    #[account(mut)]  /// The account making the contribution
+    pub backer: Signer<'info>,
     pub system_program: Program<'info, System>,  // The system program to manage lamport transfers
 }
 
+/// Constants and size calculations for the Concert account
 impl Concert {
-    pub const MAX_TITLE_LEN: usize = 20;   // Maximum length of the title
-    pub const MAX_DESC_LEN: usize = 200;  // Maximum length of the short description
+    /// Maximum length allowed for concert title
+    pub const MAX_TITLE_LEN: usize = 20;
+    /// Maximum length allowed for concert description
+    pub const MAX_DESC_LEN: usize = 200;
+    /// Total size of the Concert account struct in bytes
     pub const MAX_SIZE: usize = 32                          // PDA (Pubkey)
-                            + 4 + Concert::MAX_TITLE_LEN    // title (4 for length + 20 max characters)
-                            + 4 + Concert::MAX_DESC_LEN     // short_description (4 for length + 200 max characters)
-                            + 8                             // goal_amount (u64)
-                            + 8                             // current_amount (u64)
-                            + 8                             // start_date (i64)
-                            + 8                             // end_date (i64)
-                            + 1;                            // status (u8)
+                            + 4 + Concert::MAX_TITLE_LEN    // title (length prefix + chars)
+                            + 4 + Concert::MAX_DESC_LEN     // short_description (length prefix + chars)
+                            + 8                             // goal_amount
+                            + 8                             // current_amount
+                            + 8                             // start_date
+                            + 8                             // end_date
+                            + 1;                            // status
 }
 
+/// Main account structure for storing concert campaign data
 #[account]
 #[derive(InitSpace)]
 pub struct Concert {
-    pub pda: Pubkey,  
-    #[max_len(20)]                    // Concert PDA, serves as escrow between artist and backer
-    pub title: String,                // Campaign title
+    // Concert PDA, serves as escrow between artist and backer
+    pub pda: Pubkey,
+    // The title of the concert campaign
+    #[max_len(20)]                    
+    pub title: String,
+    // Brief description of the concert
     #[max_len(100)]
-    pub short_description: String,    // Campaign description
-    pub goal_amount: u32,             // Funding goal in lamports
-    pub ticket_price: u64,             // Ticket price
-    pub current_amount: u64,          // Current amount pledged
-    pub start_date: i64,              // Campaign start time
-    pub end_date: i64,                // Campaign end time
-    pub status: u8,                   // 0 = active, 1 = completed, 2 = cancelled
+    pub short_description: String,
+    // Target funding amount in lamports
+    pub goal_amount: u32,
+    pub ticket_price: u64,
+    // Amount of lamports currently raised
+    pub current_amount: u64,     
+    // Unix timestamp when the campaign starts
+    pub start_date: i64,      
+    pub end_date: i64,               
+    // 0 = active, 1 = completed, 2 = cancelled
+    pub status: u8,                  
 }
 
+/// Size of the account discriminator
 const DISCRIMINATOR: usize = 8;
 
+/// Custom error codes for the program
 #[error_code]
 pub enum ErrorCode {
+    /// Returned when trying to interact with an inactive concert
     #[msg("The concert is not active.")]
     ConcertNotActive,
+    /// Returned when contribution would exceed the funding goal
     #[msg("The funding goal has been exceeded.")]
-    GoalExceeded, //Should we allow this as long as the consert has not ended?
+
+    GoalExceeded,
+    /// Returned when a calculation would cause an overflow
     #[msg("Math overflow.")]
     Overflow,
+    /// Returned when a lamport transfer fails
     #[msg("Transfer error")]
     TransferFailed,
     #[msg("Contribution amount is too small")]
