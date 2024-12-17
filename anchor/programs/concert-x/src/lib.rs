@@ -22,7 +22,7 @@ pub mod concert_x {
         ctx: Context<CreateConcert>,
         title: String,
         short_description: String,
-        goal_amount: u32,
+        goal_amount: u64,
         ticket_price: u64,
         start_date: i64,
         end_date: i64,
@@ -43,6 +43,12 @@ pub mod concert_x {
     
 
     pub fn make_contribution(ctx: Context<MakeContribution>, amount: u64) -> Result<()> {
+        //makes a contribution to a concert campaign
+        //
+        // # Arguments
+        // * `ctx` - The context of the instruction
+        // * `amount` - The amount of lamports to contribute
+
         //Require that campaign is active and contribution amount is greater than or equal ticket price
         require!(
             ctx.accounts.concert.status == 0,
@@ -56,7 +62,6 @@ pub mod concert_x {
         let backer_key = ctx.accounts.backer.to_account_info();
         let concert_key = ctx.accounts.concert.to_account_info();
         let program_id = ctx.accounts.system_program.to_account_info();
-
         let cpi_context = CpiContext::new(
             program_id, 
             Transfer {from: backer_key, to: concert_key},
@@ -132,7 +137,7 @@ pub struct Concert {
     #[max_len(100)]
     pub short_description: String,
     /// Target funding amount in lamports
-    pub goal_amount: u32,
+    pub goal_amount: u64,
     pub ticket_price: u64,
     /// Amount of lamports currently raised
     pub current_amount: u64,     
