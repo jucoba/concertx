@@ -1,26 +1,24 @@
 use anchor_lang::prelude::*;
-use anchor_lang::solana_program::system_instruction;
 use anchor_lang::system_program::{transfer, Transfer};
 
-/// Program ID for the ConcertX smart contract
+// Program ID for the ConcertX smart contract
 declare_id!("Fh63wv5yhjeNPhyd7jN4ZAhAqLjngHxr8fhV9u7F21fu");
 
-/// Main program module containing all instruction handlers
+// Main program module containing all instruction handlers
 #[program]
 pub mod concert_x {
     use super::*;
 
     pub fn create_concert(
-    /// Creates a new concert crowdfunding campaign
-    /// 
-    /// # Arguments
-    /// * `ctx` - The context of the instruction
-    /// * `title` - The title of the concert campaign
-    /// * `short_description` - Brief description of the concert
-    /// * `goal_amount` - Target funding amount in lamports
-    /// * `start_date` - Unix timestamp for campaign start
-    /// * `end_date` - Unix timestamp for campaign end
-    /// * `max_token_supply` - Maximum number of tokens that can be minted
+    // Creates a new concert crowdfunding campaign
+    //
+    // # Arguments
+    // * `ctx` - The context of the instruction
+    // * `title` - The title of the concert campaign
+    // * `short_description` - Brief description of the concert
+    // * `goal_amount` - Target funding amount in lamports
+    // * `start_date` - Unix timestamp for campaign start
+    // * `end_date` - Unix timestamp for campaign end
         ctx: Context<CreateConcert>,
         title: String,
         short_description: String,
@@ -28,7 +26,6 @@ pub mod concert_x {
         ticket_price: u64,
         start_date: i64,
         end_date: i64,
-        max_token_supply: u32,
     ) -> Result<()> {
         msg!("Creating new concert campaign");
         let concert = &mut ctx.accounts.concert;
@@ -126,23 +123,24 @@ impl Concert {
 #[account]
 #[derive(InitSpace)]
 pub struct Concert {
-    // Concert PDA, serves as escrow between artist and backer
+    /// Concert PDA, serves as escrow between artist and backer
     pub pda: Pubkey,
-    // The title of the concert campaign
+    /// The title of the concert campaign
     #[max_len(20)]                    
     pub title: String,
-    // Brief description of the concert
+    /// Brief description of the concert
     #[max_len(100)]
     pub short_description: String,
-    // Target funding amount in lamports
+    /// Target funding amount in lamports
     pub goal_amount: u32,
     pub ticket_price: u64,
-    // Amount of lamports currently raised
+    /// Amount of lamports currently raised
     pub current_amount: u64,     
-    // Unix timestamp when the campaign starts
+    /// Unix timestamps when the campaign starts
     pub start_date: i64,      
+    /// Unix timestamps when the campaign ends
     pub end_date: i64,               
-    // 0 = active, 1 = completed, 2 = cancelled
+    /// 0 = active, 1 = completed, 2 = cancelled
     pub status: u8,                  
 }
 
