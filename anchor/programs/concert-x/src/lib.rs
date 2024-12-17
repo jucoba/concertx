@@ -110,7 +110,6 @@ pub struct Concert {
     #[max_len(20)]            
     pub title: String,
     /// Brief description of the concert
-    #[max_len(100)]
     #[max_len(200)]
     /// Target funding amount in lamports
     pub goal_amount: u32,
