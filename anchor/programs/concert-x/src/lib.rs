@@ -36,7 +36,7 @@ pub mod concert_x {
         concert.ticket_price = ticket_price;
         concert.start_date = start_date;
         concert.end_date = end_date;
-        concert.status = 0;
+        concert.status = 0;        
         Ok(())
     }
 
@@ -72,6 +72,7 @@ pub mod concert_x {
 
         //Update the current amount
         ctx.accounts.concert.current_amount += amount;
+        ctx.accounts.concert.contributors.push(*ctx.accounts.backer.key);
         
         Ok(())
     }
@@ -146,7 +147,10 @@ pub struct Concert {
     /// Unix timestamps when the campaign ends
     pub end_date: i64,               
     /// 0 = active, 1 = completed, 2 = cancelled
-    pub status: u8,                  
+    pub status: u8,
+    /// Concert contributors
+    #[max_len(100)]
+    pub contributors: Vec<Pubkey>,
 }
 
 /// Size of the account discriminator
