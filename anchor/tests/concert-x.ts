@@ -12,50 +12,49 @@ describe("concert-x", () => {
 
   const program = anchor.workspace.ConcertX as Program<ConcertX>;
   
+  const concert = {
+    title: "The big concert",
+    desc: "The most amazing concert",
+    goalAmount: 100,
+    maxTokenSupply: 100, 
+    ticketPrice: 0.1,
+    startDate: new BN(new Date(2024,12,31,10,0,0).getTime()),
+    endDate: new BN(new Date(2024,12,31,10,0,0).getTime()).add(new BN(1000)),
+  };
 
   it("Create concert", async () => {
-    // Add your test here.
-    const title = "The big concert";
-    const desc = "The most amazing concert";
-    const goalAmount = 1000;
-    const maxTokenSupply = 1000;
-    const startDate = new BN(new Date(2024,12,31,10,0,0).getTime());
-    const endDate = startDate.add(new BN(1000));
-    const tx = await program.methods.createConcert(title, desc,goalAmount,startDate,endDate, maxTokenSupply).rpc();
+    const tx = await program.methods.createConcert(concert.title, 
+                                                   concert.desc, 
+                                                   concert.goalAmount,
+                                                   concert.ticketPrice,
+                                                   concert.startDate, 
+                                                   concert.endDate,
+                                                   concert.maxTokenSupply).rpc();
+
     console.log("Your transaction signature", tx);
 
     const [concertXPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("concertX"), Buffer.from(title), provider.wallet.publicKey.toBuffer()],
+      [Buffer.from("concertX"), Buffer.from(concert.title), provider.wallet.publicKey.toBuffer()],
       program.programId
     );
     
     const account = await program.account.concert.fetch(concertXPda);
-    expect(account.title).equals(title);
-    expect(account.shortDescription).equals(desc);
-    expect(account.startDate.eq(startDate)).to.be.true;
-    expect(account.endDate.eq(endDate)).to.be.true;
-    expect(account.maxTokenSupply).equals(maxTokenSupply);
-    
-
-    const concerts = await fetchConcerts();
-    expect(concerts.length).greaterThan(0);
-
-   
-    
+    expect(account.title).equals(concert.title);
+    expect(account.shortDescription).equals(concert.desc);
+    expect(account.startDate.eq(concert.startDate)).to.be.true;
+    expect(account.endDate.eq(concert.endDate)).to.be.true;
+    expect(Math.round(account.ticketPrice * 10) / 10).equals(concert.ticketPrice);
+    expect(account.goalAmount).equals(concert.goalAmount);
+    expect(account.maxTokenSupply).equals(concert.maxTokenSupply);
+    expect(account.status).equals(0);
+    expect(account.contributors.length).equals(0);
+    expect(account.currentAmount).equals(0);
   });
 
-  /*it("Make an apportation", async () => {
-    // Add your test here.
-    const title = "The little concert";
-    const desc = "The most amazing concert";
-    const goalAmount = 1000;
-    const startDate = new BN(new Date(2024,12,31,10,0,0).getTime());
-    const endDate = startDate.add(new BN(1000));
-    const tx = await program.methods.createConcert(title, desc,goalAmount,startDate,endDate).rpc();
-    console.log("Your transaction signature", tx);
-
+  it("Make a contribution", async () => {
+    // Get PDA of the concert campaign 
     const [concertXPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("concertX"), Buffer.from(title), provider.wallet.publicKey.toBuffer()],
+      [Buffer.from("concertX"), Buffer.from(concert.title), provider.wallet.publicKey.toBuffer()],
       program.programId
     );
 
@@ -71,10 +70,10 @@ describe("concert-x", () => {
       type: "confirmed", // Commitment level as the type
     });
 
-    const aportationAmount = 500;
+    const contributionAmount = 500;
 
     await program.methods
-      .makeAportation(new anchor.BN(aportationAmount))
+      .makeContribution(contributionAmount)
       .accounts({
         concert: concertXPda,
         backer: backer.publicKey,
@@ -83,12 +82,9 @@ describe("concert-x", () => {
       .rpc();
 
       const updatedConcertAccount = await program.account.concert.fetch(concertXPda);
-      //expect(updatedConcertAccount.currentAmount.toNumber()).to.equal(aportationAmount);
-    
-    
-  });*/
+      expect(updatedConcertAccount.currentAmount).to.equal(contributionAmount);
+      expect(updatedConcertAccount.contributors.length).greaterThan(0);
 
-
-
+  });
 
 });
