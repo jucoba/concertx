@@ -16,16 +16,17 @@ pub mod concert_x {
     // * `ctx` - The context of the instruction
     // * `title` - The title of the concert campaign
     // * `short_description` - Brief description of the concert
-    // * `goal_amount` - Target funding amount in lamports
+    // * `goal_amount` - Target funding amount in SOL
     // * `start_date` - Unix timestamp for campaign start
     // * `end_date` - Unix timestamp for campaign end
         ctx: Context<CreateConcert>,
         title: String,
         short_description: String,
-        goal_amount: u64,
-        ticket_price: u64,
+        goal_amount: u16,
+        ticket_price: f32,
         start_date: i64,
         end_date: i64,
+        max_token_supply: u16
     ) -> Result<()> {
         msg!("Creating new concert campaign");
         let concert = &mut ctx.accounts.concert;
@@ -33,21 +34,23 @@ pub mod concert_x {
         concert.title = title;
         concert.short_description = short_description;
         concert.goal_amount = goal_amount;
+        concert.current_amount = 0.0;
         concert.ticket_price = ticket_price;
         concert.start_date = start_date;
         concert.end_date = end_date;
+        concert.max_token_supply = max_token_supply;
         concert.status = 0;        
         Ok(())
     }
 
     
 
-    pub fn make_contribution(ctx: Context<MakeContribution>, amount: u64) -> Result<()> {
+    pub fn make_contribution(ctx: Context<MakeContribution>, amount: f32) -> Result<()> {
         //makes a contribution to a concert campaign
         //
         // # Arguments
         // * `ctx` - The context of the instruction
-        // * `amount` - The amount of lamports to contribute
+        // * `amount` - The amount of SOL to contribute
 
         //Require that campaign is active and contribution amount is greater than or equal ticket price
         require!(
@@ -67,8 +70,8 @@ pub mod concert_x {
             Transfer {from: backer_key, to: concert_key},
         );
 
-        //transfer lamports to the concert escrow account
-        transfer(cpi_context, amount)?;
+        //transfer SOL to the concert escrow account
+        transfer(cpi_context, amount as u64)?;
 
         //Update the current amount
         ctx.accounts.concert.current_amount += amount;
@@ -118,8 +121,9 @@ impl Concert {
     pub const MAX_SIZE: usize = 32                          // PDA (Pubkey)
                             + 4 + Concert::MAX_TITLE_LEN    // title (length prefix + chars)
                             + 4 + Concert::MAX_DESC_LEN     // short_description (length prefix + chars)
-                            + 8                             // goal_amount
-                            + 8                             // current_amount
+                            + 2                             // goal_amount
+                            + 4                             // ticket_price
+                            + 4                             // current_amount
                             + 8                             // start_date
                             + 8                             // end_date
                             + 1;                            // status
@@ -137,17 +141,19 @@ pub struct Concert {
     /// Brief description of the concert
     #[max_len(100)]
     pub short_description: String,
-    /// Target funding amount in lamports
-    pub goal_amount: u64,
-    pub ticket_price: u64,
-    /// Amount of lamports currently raised
-    pub current_amount: u64,     
+    /// Target funding amount in SOL
+    pub goal_amount: u16,
+    pub ticket_price: f32,
+    /// Amount of SOL currently raised
+    pub current_amount: f32,     
     /// Unix timestamps when the campaign starts
     pub start_date: i64,      
     /// Unix timestamps when the campaign ends
-    pub end_date: i64,               
+    pub end_date: i64,
     /// 0 = active, 1 = completed, 2 = cancelled
     pub status: u8,
+    /// Maximum number of tokens that can be minted
+    pub max_token_supply: u16,
     /// Concert contributors
     #[max_len(100)]
     pub contributors: Vec<Pubkey>,

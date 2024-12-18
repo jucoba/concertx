@@ -15,8 +15,9 @@ describe("concert-x", () => {
   const concert = {
     title: "The big concert",
     desc: "The most amazing concert",
-    goalAmount: 1000,
-    ticketPrice: 100,
+    goalAmount: 100,
+    maxTokenSupply: 100, 
+    ticketPrice: 0.1,
     startDate: new BN(new Date(2024,12,31,10,0,0).getTime()),
     endDate: new BN(new Date(2024,12,31,10,0,0).getTime()).add(new BN(1000)),
   };
@@ -24,10 +25,11 @@ describe("concert-x", () => {
   it("Create concert", async () => {
     const tx = await program.methods.createConcert(concert.title, 
                                                    concert.desc, 
-                                                   new BN(concert.goalAmount),
-                                                   new BN(concert.ticketPrice),
+                                                   concert.goalAmount,
+                                                   concert.ticketPrice,
                                                    concert.startDate, 
-                                                   concert.endDate).rpc();
+                                                   concert.endDate,
+                                                   concert.maxTokenSupply).rpc();
 
     console.log("Your transaction signature", tx);
 
@@ -41,7 +43,12 @@ describe("concert-x", () => {
     expect(account.shortDescription).equals(concert.desc);
     expect(account.startDate.eq(concert.startDate)).to.be.true;
     expect(account.endDate.eq(concert.endDate)).to.be.true;
-    expect(account.ticketPrice.toNumber()).equals(concert.ticketPrice);
+    expect(Math.round(account.ticketPrice * 10) / 10).equals(concert.ticketPrice);
+    expect(account.goalAmount).equals(concert.goalAmount);
+    expect(account.maxTokenSupply).equals(concert.maxTokenSupply);
+    expect(account.status).equals(0);
+    expect(account.contributors.length).equals(0);
+    expect(account.currentAmount).equals(0);
   });
 
   it("Make a contribution", async () => {
@@ -66,7 +73,7 @@ describe("concert-x", () => {
     const contributionAmount = 500;
 
     await program.methods
-      .makeContribution(new anchor.BN(contributionAmount))
+      .makeContribution(contributionAmount)
       .accounts({
         concert: concertXPda,
         backer: backer.publicKey,
@@ -75,14 +82,9 @@ describe("concert-x", () => {
       .rpc();
 
       const updatedConcertAccount = await program.account.concert.fetch(concertXPda);
-      expect(updatedConcertAccount.currentAmount.toNumber()).to.equal(contributionAmount);
+      expect(updatedConcertAccount.currentAmount).to.equal(contributionAmount);
       expect(updatedConcertAccount.contributors.length).greaterThan(0);
 
-    
-    
   });
-
-
-
 
 });
